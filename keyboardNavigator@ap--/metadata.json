@@ -1,0 +1,4 @@
+{   "shell-version": ["3.4.1"],
+    "uuid": "keyboardNavigator@ap--", 
+    "name": "Keyboard Navigator", 
+    "description": "This extension allows you to select windows in overlay mode by using your left and right arrow keys and pressing Enter. Most of the code is from the Window Navigator extension!"}
