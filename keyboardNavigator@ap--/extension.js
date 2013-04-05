@@ -125,24 +125,6 @@ function enable() {
     }
     workspaceInjections['hideWindowsTooltips'] = undefined;
 
-    // XXX: look into that
-    // workspaceInjections['positionWindows'] = injectToFunction(Workspace.Workspace.prototype, 'positionWindows', function(flags) {
-    //    let visibleClones = this._windows.slice();
-    //    if (this._reservedSlot)
-    //        visibleClones.push(this._reservedSlot);
-    //
-    //    let slots = this._computeAllWindowSlots(visibleClones.length);
-    //    visibleClones = this._orderWindowsByMotionAndStartup(visibleClones, slots);
-    //    for (let i = 0; i < visibleClones.length; i++) {
-    //        let clone = visibleClones[i];
-    //        let metaWindow = clone.metaWindow;
-    //        let mainIndex = this._lookupIndex(metaWindow);
-    //        let overlay = this._windowOverlays[mainIndex];
-    //        //if (overlay)
-    //        //    overlay.setId(i < 9 ? i + 1 : null);
-    //    }
-    // });
-
 
     // WorkspaceView Injections
     //
@@ -157,8 +139,6 @@ function enable() {
     });
     
     WorkspacesView.WorkspacesView.prototype._onKeyRelease = function(s, o) {
-
-        global.log('KEY: '+o.get_key_symbol())
 
         if ( (o.get_key_symbol() == Clutter.KEY_Left) ||
              (o.get_key_symbol() == Clutter.KEY_Right) ) {
