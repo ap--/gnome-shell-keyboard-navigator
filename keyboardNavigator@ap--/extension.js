@@ -109,14 +109,6 @@ function enable() {
         this._keyboardTTid = undefined;
     });
 
-    Workspace.Workspace.prototype.showWindowsTooltips = function() {
-        for (let i in this._windowOverlays) {
-            if (this._windowOverlays[i] != null)
-                this._windowOverlays[i].showTooltip();
-        }
-    }
-    workspaceInjections['showWindowsTooltips'] = undefined;
-
     Workspace.Workspace.prototype.hideWindowsTooltips = function() {
         for (let i in this._windowOverlays) {
             if (this._windowOverlays[i] != null)
