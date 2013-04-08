@@ -173,7 +173,7 @@ function enable() {
 
         } 
 
-        if ( (o.get_key_symbol() == 65293) ) {
+        if ( (o.get_key_symbol() == Clutter.Return) ) {
             
             let ws = this._workspaces[global.screen.get_active_workspace_index()];
             ws.hideWindowsTooltips();
