@@ -70,9 +70,45 @@ function enable() {
     }
     winInjections['hideTooltip'] = undefined;
 
+    Workspace.Workspace.prototype.showTooltip = function() {
+        if (this._tip == null)
+            return;
+        this._tip.text = (this.metaWorkspace.index() + 1).toString();
+        this._tip.x = this._x;
+        this._tip.y = this._y;
+        this._tip.show();
+        this._tip.raise_top();
+    }
+    workspaceInjections['showTooltip'] = undefined;
 
-    // Workspace injections
-    //
+    Workspace.Workspace.prototype.hideTooltip = function() {
+        if (this._tip == null)
+            return;
+        if (!this._tip.get_parent())
+            return;
+        this._tip.hide();
+    }
+    workspaceInjections['hideTooltip'] = undefined;
+
+    Workspace.Workspace.prototype.getWindowWithTooltip = function(id) {
+        for (let i in this._windowOverlays) {
+            if (this._windowOverlays[i] == null)
+                continue;
+            if (this._windowOverlays[i].getId() === id)
+                return this._windowOverlays[i]._windowClone.metaWindow;
+        }
+        return null;
+    }
+    workspaceInjections['getWindowWithTooltip'] = undefined;
+
+    Workspace.Workspace.prototype.showWindowsTooltips = function() {
+        for (let i in this._windowOverlays) {
+            if (this._windowOverlays[i] != null)
+                this._windowOverlays[i].showTooltip();
+        }
+    }
+    workspaceInjections['showWindowsTooltips'] = undefined;
+
     Workspace.Workspace.prototype.hideWindowsTooltips = function() {
         for (let i in this._windowOverlays) {
             if (this._windowOverlays[i] != null)
@@ -81,6 +117,14 @@ function enable() {
     }
     workspaceInjections['hideWindowsTooltips'] = undefined;
 
+    WorkspacesView.WorkspacesView.prototype._hideTooltips = function() {
+        if (global.stage.get_key_focus() == global.stage)
+            global.stage.set_key_focus(this._prevFocusActor);
+        this._pickWindow = false;
+        for (let i = 0; i < this._workspaces.length; i++)
+            this._workspaces[i].hideWindowsTooltips();
+    }
+    workViewInjections['_hideTooltips'] = undefined;
 
     // WorkspaceView Injections
     //
