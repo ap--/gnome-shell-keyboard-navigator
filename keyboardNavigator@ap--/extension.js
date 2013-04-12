@@ -41,11 +41,26 @@ function resetState() {
 function enable() {
     resetState();
 
-    // Add Tooltip to overlay windows
-    //
+    Workspace.WindowOverlay.prototype.setId = function(id) {
+        if (this._text && this._text.visible && id == null)
+            this._text.hide();
+        this._id = id;
+        if (id != null)
+            this._text.text = this._id.toString();
+    }
+    winInjections['setId'] = undefined;
+
+    Workspace.WindowOverlay.prototype.getId = function() {
+        return this._id;
+    }
+    winInjections['getId'] = undefined;
+
     Workspace.WindowOverlay.prototype.showTooltip = function() {
+        if (this._id === null)
+            return;
         this._text.raise_top();
         this._text.show();
+        this._text.text = this._id.toString();
     }
     winInjections['showTooltip'] = undefined;
 
@@ -122,8 +137,8 @@ function enable() {
     workViewInjections['_onKeyRelease'] = undefined;
 
     winInjections['_init'] = injectToFunction(Workspace.WindowOverlay.prototype, '_init', function(windowClone, parentActor) {
-        createdActors.push(this._text = new St.Label({ style_class: 'extension-keyboardNavigator-window-tooltip',
-                                                       text: TOOLTIP_CHARACTER }));
+        this._id = null;
+        createdActors.push(this._text = new St.Label({ style_class: 'extension-windowsNavigator-window-tooltip' }));
         this._text.hide();
         parentActor.add_actor(this._text);
     });
@@ -138,7 +153,24 @@ function enable() {
     workspaceInjections['_init'] = injectToFunction(Workspace.Workspace.prototype, '_init', function() {
         this._keyboardTTid = undefined;
     });
-    
+
+    workspaceInjections['positionWindows'] = injectToFunction(Workspace.Workspace.prototype, 'positionWindows', function(flags) {
+        let visibleClones = this._windows.slice();
+        if (this._reservedSlot)
+            visibleClones.push(this._reservedSlot);
+
+        let slots = this._computeAllWindowSlots(visibleClones.length);
+        visibleClones = this._orderWindowsByMotionAndStartup(visibleClones, slots);
+        for (let i = 0; i < visibleClones.length; i++) {
+            let clone = visibleClones[i];
+            let metaWindow = clone.metaWindow;
+            let mainIndex = this._lookupIndex(metaWindow);
+            let overlay = this._windowOverlays[mainIndex];
+            if (overlay)
+                overlay.setId(i < 9 ? i + 1 : null);
+        }
+    });
+
     workViewInjections['_init'] = injectToFunction(WorkspacesView.WorkspacesView.prototype, '_init', function(width, height, x, y, workspaces) {
         this._keyReleaseEventId = global.stage.connect('key-release-event', Lang.bind(this, this._onKeyRelease));
         connectedSignals.push({ obj: global.stage, id: this._keyReleaseEventId });
