@@ -11,4 +11,10 @@ Most of the code in this extension comes from the _Window Navigator extension_ [
 * the order in which the left and right keys cicle through the overlay windows is not intuitive, because the overlay placement is not taken into account
 * I bet someone will run into a bug, when closing windows in overlay mode. The extension doesn't deal with this. But I haven't encountered a problem so far.
 
+### windowsNavigator branch
+
+* selecting order is fixed
+* the ALT + Number select mode from windowsNavigator extension is still there
+* Up and Down arrow keys work ( this is only messy when there are 2 or 4 windows, works otherwise )
+* if you have a overlaywindow labeled, you select the window by pressing enter, or the Super\_L button again!
 
