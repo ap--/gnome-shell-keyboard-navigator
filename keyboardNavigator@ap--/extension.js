@@ -30,6 +30,7 @@ function injectToFunction(parent, name, func) {
 }
 
 let winInjections, workspaceInjections, workViewInjections, createdActors, connectedSignals;
+let workspacePos;
 
 function resetState() {
     winInjections = { };
@@ -41,6 +42,9 @@ function resetState() {
 
 function enable() {
     resetState();
+
+    workspacePos = Workspace.POSITIONS[4];
+    Workspace.POSITIONS[4] = [workspacePos[0], workspacePos[1], workspacePos[3], workspacePos[2]];
 
     workspaceInjections['zoomFromOverview'] = injectToFunction(Workspace.Workspace.prototype, 'zoomFromOverview', function () {
         if ( (this._selectedid !== undefined) &&
@@ -323,7 +327,7 @@ function enable() {
 
     winInjections['_init'] = injectToFunction(Workspace.WindowOverlay.prototype, '_init', function(windowClone, parentActor) {
         this._id = null;
-        createdActors.push(this._text = new St.Label({ style_class: 'extension-windowsNavigator-window-tooltip' }));
+        createdActors.push(this._text = new St.Label({ style_class: 'extension-keyboardNavigator-window-tooltip' }));
         this._text.hide();
         parentActor.add_actor(this._text);
     });
@@ -338,7 +342,7 @@ function enable() {
     workspaceInjections['_init'] = injectToFunction(Workspace.Workspace.prototype, '_init', function(metaWorkspace) {
         this._selectedid = undefined;
         if (metaWorkspace && metaWorkspace.index() < 9) {
-            createdActors.push(this._tip = new St.Label({ style_class: 'extension-windowsNavigator-window-tooltip',
+            createdActors.push(this._tip = new St.Label({ style_class: 'extension-keyboardNavigator-window-tooltip',
                                                           visible: false }));
 
             this.actor.add_actor(this._tip);
@@ -405,6 +409,8 @@ function disable() {
     for each (i in createdActors)
         i.destroy();
 
+    Workspace.POSITIONS[4] = workspacePos;
+    
     resetState();
 }
 
